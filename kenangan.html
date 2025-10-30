@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Kenangan - Foto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        body.dark-theme {
+            --primary: #2d1b69;
+            --secondary: #1a3c7c;
+            --light: #121212;
+            --dark: #f8f9fa;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(to right, #fff, #e0e0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dark-theme h1 {
+            background: linear-gradient(to right, #fff, #a0a0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .special-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 12px 25px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .special-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .back-button {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 12px 25px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.6);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .photo-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            animation: fadeIn 1s ease-out;
+            animation-fill-mode: both;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-card:hover .photo-img {
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Delay animations for photo cards */
+        .photo-card:nth-child(1) { animation-delay: 0.1s; }
+        .photo-card:nth-child(2) { animation-delay: 0.2s; }
+        .photo-card:nth-child(3) { animation-delay: 0.3s; }
+        .photo-card:nth-child(4) { animation-delay: 0.4s; }
+        .photo-card:nth-child(5) { animation-delay: 0.5s; }
+        .photo-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .special-button, .back-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 0.8rem;
+            }
+            
+            .photo-img {
+                height: 150px;
+            }
+            
+            .special-button, .back-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* New Page Styles */
+        .new-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .love-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .love {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            animation: loveFloat 15s infinite linear;
+        }
+
+        .side-love {
+            position: fixed;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 30px;
+            z-index: 999;
+            animation: sideLoveFloat 8s infinite ease-in-out;
+        }
+
+        .side-love.left {
+            left: 10px;
+        }
+
+        .side-love.right {
+            right: 10px;
+        }
+
+        @keyframes loveFloat {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sideLoveFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateY(-20px) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .new-page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .new-page-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .new-page-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .new-page-subtitle {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .new-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .new-photo-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .new-photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .new-photo-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* NEW FEATURES STYLES */
+        .theme-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .like-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            color: #ff6b6b;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .photo-card:hover .like-btn,
+        .new-photo-card:hover .like-btn {
+            opacity: 1;
+        }
+
+        .like-btn.liked {
+            color: #ff5252;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .slideshow-btn {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 10px 20px;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slideshow-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.6);
+        }
+
+        .slideshow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .slideshow-image {
+            max-width: 95%;
+            max-height: 70%;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .slideshow-controls {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+
+        .social-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .comment-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin: 1.5rem auto;
+            max-width: 600px;
+        }
+
+        .comment-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .comment-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .comments-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .comment {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1100;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            max-width: 95%;
+            max-height: 85%;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1101;
+        }
+
+        .modal-close:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1101;
+        }
+
+        .modal-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .modal-prev {
+            left: 15px;
+        }
+
+        .modal-next {
+            right: 15px;
+        }
+
+        .modal-counter {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* Message Button Styles */
+        .message-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 12px 25px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: 600;
+            cursor: pointer;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .message-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1200;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .message-content {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: zoomIn 0.3s ease;
+            position: relative;
+        }
+
+        .message-text {
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .message-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #333;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .message-close:hover {
+            color: #ff6b6b;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 480px) {
+            .modal-nav {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .modal-prev {
+                left: 10px;
+            }
+            
+            .modal-next {
+                right: 10px;
+            }
+            
+            .modal-close {
+                font-size: 1.8rem;
+                top: 10px;
+                right: 15px;
+            }
+            
+            .slideshow-controls {
+                gap: 0.5rem;
+            }
+            
+            .comment-section {
+                padding: 1rem;
+            }
+            
+            .message-content {
+                padding: 1.5rem;
+            }
+            
+            .message-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Galeri Kenangan</h1>
+            <p class="subtitle">Momen berharga yang terabadikan dalam foto</p>
+            
+            <!-- Social Buttons -->
+            <div class="social-buttons">
+                <button class="social-btn" id="likeAllBtn">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+            
+            <button class="special-button" id="specialBtn">
+                <i class="fas fa-heart"></i> Buka Halaman Spesial
+            </button>
+            
+            <!-- Slideshow Button -->
+            <button class="slideshow-btn" id="slideshowBtn">
+                <i class="fas fa-play-circle"></i> Mulai Slideshow
+            </button>
+        </header>
+        
+        <!-- Comment Section -->
+        <div class="comment-section">
+            <h3 style="text-align: center; margin-bottom: 1rem; font-size: clamp(1rem, 3vw, 1.3rem);">Bagikan Kenangan Anda</h3>
+            <textarea class="comment-input" id="commentInput" placeholder="Tulis komentar Anda di sini..."></textarea>
+            <button class="special-button" id="submitComment" style="width: 100%;">
+                <i class="fas fa-paper-plane"></i> Kirim Komentar
+            </button>
+            <div class="comments-list" id="commentsList">
+                <!-- Comments will be added here -->
+            </div>
+        </div>
+        
+        <div class="gallery" id="gallery">
+            <!-- Photo cards will be dynamically added -->
+        </div>
+        
+        <footer>
+            <p>Galeri Kenangan &copy; 2025 - Dibuat dengan penuh cinta</p>
+        </footer>
+    </div>
+
+    <!-- Photo Modal -->
+    <div class="modal" id="photoModal">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <button class="modal-nav modal-prev" id="modalPrev">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="modal-nav modal-next" id="modalNext">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <img class="modal-content" id="modalImage">
+        <div class="modal-counter" id="modalCounter"></div>
+    </div>
+
+    <!-- New Page Modal -->
+    <div class="modal" id="newPageModal">
+        <span class="modal-close" id="newPageModalClose">&times;</span>
+        <button class="modal-nav modal-prev" id="newPageModalPrev">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="modal-nav modal-next" id="newPageModalNext">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <img class="modal-content" id="newPageModalImage">
+        <div class="modal-counter" id="newPageModalCounter"></div>
+    </div>
+
+    <!-- Slideshow Container -->
+    <div class="slideshow-container" id="slideshowContainer">
+        <img class="slideshow-image" id="slideshowImage">
+        <div class="slideshow-controls">
+            <button class="player-btn" id="slideshowPrev">
+                <i class="fas fa-step-backward"></i>
+            </button>
+            <button class="player-btn play" id="slideshowPlayPause">
+                <i class="fas fa-pause"></i>
+            </button>
+            <button class="player-btn" id="slideshowNext">
+                <i class="fas fa-step-forward"></i>
+            </button>
+            <button class="player-btn" id="slideshowClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="message-modal" id="messageModal">
+        <div class="message-content">
+            <span class="message-close" id="messageClose">&times;</span>
+            <div class="message-text" id="messageText">
+                <!-- Message content will be inserted here -->
+            </div>
+            <button class="message-button" id="messageOkBtn">
+                <i class="fas fa-check"></i> Oke
+            </button>
+        </div>
+    </div>
+
+    <!-- New Page -->
+    <div class="new-page" id="newPage">
+        <!-- Side Love Elements -->
+        <div class="side-love left">❤</div>
+        <div class="side-love right">❤</div>
+        <div class="side-love left" style="top: 30%; font-size: 25px; animation-delay: 1s;">❤</div>
+        <div class="side-love right" style="top: 40%; font-size: 30px; animation-delay: 2s;">❤</div>
+        <div class="side-love left" style="top: 60%; font-size: 20px; animation-delay: 3s;">❤</div>
+        <div class="side-love right" style="top: 70%; font-size: 35px; animation-delay: 4s;">❤</div>
+        
+        <div class="love-particles" id="loveParticles"></div>
+        <button class="close-btn" id="closeBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="new-page-container">
+            <div class="new-page-header">
+                <h1 class="new-page-title">Halaman Spesial</h1>
+                <p class="new-page-subtitle">Kenangan indah yang tersimpan di hati</p>
+                
+                <!-- Message Button -->
+                <button class="message-button" id="messageBtn">
+                    <i class="fas fa-envelope"></i> Pesan Spesial
+                </button>
+                
+                <button class="back-button" id="backBtn">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Halaman Utama
+                </button>
+            </div>
+            
+            <div class="new-gallery" id="newGallery">
+                <!-- Photos using local files -->
+                <div class="new-photo-card" data-index="0">
+                    <img src="spesial1.jpeg" alt="Kenangan" class="new-photo-img">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div class="new-photo-card" data-index="1">
+                    <img src="spesial2.jpeg" alt="Kenangan" class="new-photo-img">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div class="new-photo-card" data-index="2">
+                    <img src="spesial3.jpeg" alt="Kenangan" class="new-photo-img">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div class="new-photo-card" data-index="3">
+                    <img src="spesial4.jpeg" alt="Kenangan" class="new-photo-img">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div class="new-photo-card" data-index="4">
+                    <img src="spesial5.jpeg" alt="Kenangan" class="new-photo-img">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+                
+                <div class="new-photo-card" data-index="5">
+                    <img src="spesial6.jpeg" alt="Kenangan" class="new-photo-img">
+                    <button class="like-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 20 : 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 15 + 5;
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 20 + 10;
+                const animationDelay = Math.random() * 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.animationDuration = `${animationDuration}s`;
+                particle.style.animationDelay = `${animationDelay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Create love particles for new page
+        function createLoveParticles() {
+            const loveContainer = document.getElementById('loveParticles');
+            const loveCount = window.innerWidth < 768 ? 15 : 20;
+            
+            for (let i = 0; i < loveCount; i++) {
+                const love = document.createElement('div');
+                love.classList.add('love');
+                love.innerHTML = '❤';
+                
+                const size = Math.random() * 25 + 15;
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 20 + 10;
+                const animationDelay = Math.random() * 5;
+                
+                love.style.fontSize = `${size}px`;
+                love.style.left = `${left}%`;
+                love.style.animationDuration = `${animationDuration}s`;
+                love.style.animationDelay = `${animationDelay}s`;
+                
+                loveContainer.appendChild(love);
+            }
+        }
+
+        // Photo modal functionality
+        let currentPhotoIndex = 0;
+        let currentNewPagePhotoIndex = 0;
+        let photoCards = [];
+        let newPhotoCards = document.querySelectorAll('.new-photo-card');
+        const modal = document.getElementById('photoModal');
+        const newPageModal = document.getElementById('newPageModal');
+        const modalImage = document.getElementById('modalImage');
+        const newPageModalImage = document.getElementById('newPageModalImage');
+        const modalClose = document.getElementById('modalClose');
+        const newPageModalClose = document.getElementById('newPageModalClose');
+        const modalPrev = document.getElementById('modalPrev');
+        const modalNext = document.getElementById('modalNext');
+        const newPageModalPrev = document.getElementById('newPageModalPrev');
+        const newPageModalNext = document.getElementById('newPageModalNext');
+        const modalCounter = document.getElementById('modalCounter');
+        const newPageModalCounter = document.getElementById('newPageModalCounter');
+
+        // DOM elements
+        const specialBtn = document.getElementById('specialBtn');
+        const backBtn = document.getElementById('backBtn');
+        const newPage = document.getElementById('newPage');
+        const closeBtn = document.getElementById('closeBtn');
+
+        // NEW FEATURES ELEMENTS
+        const themeToggle = document.getElementById('themeToggle');
+        const slideshowBtn = document.getElementById('slideshowBtn');
+        const slideshowContainer = document.getElementById('slideshowContainer');
+        const slideshowImage = document.getElementById('slideshowImage');
+        const slideshowPlayPause = document.getElementById('slideshowPlayPause');
+        const slideshowPrev = document.getElementById('slideshowPrev');
+        const slideshowNext = document.getElementById('slideshowNext');
+        const slideshowClose = document.getElementById('slideshowClose');
+        const likeAllBtn = document.getElementById('likeAllBtn');
+        const commentInput = document.getElementById('commentInput');
+        const submitComment = document.getElementById('submitComment');
+        const commentsList = document.getElementById('commentsList');
+        const gallery = document.getElementById('gallery');
+
+        // Message elements
+        const messageBtn = document.getElementById('messageBtn');
+        const messageModal = document.getElementById('messageModal');
+        const messageText = document.getElementById('messageText');
+        const messageClose = document.getElementById('messageClose');
+        const messageOkBtn = document.getElementById('messageOkBtn');
+
+        // Initialize default photos - MENGGUNAKAN FILE LOKAL
+        const defaultPhotos = [
+            {
+                src: "utama1.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama2.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama3.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama4.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama5.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama6.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama7.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama8.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama18.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama9.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama10.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama11.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama12.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama13.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama14.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama15.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama16.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama17.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama10.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama20.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama21.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama22.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama23.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama24.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama25.jpeg",
+                alt: "Momen Bahagia"
+            },
+            {
+                src: "utama26.jpeg",
+                alt: "Momen Bahagia"
+            }
+        ];
+
+        // NEW FEATURES FUNCTIONS
+
+        // Toggle dark/light theme
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Toggle like button
+        function toggleLike(button) {
+            const icon = button.querySelector('i');
+            button.classList.toggle('liked');
+            if (button.classList.contains('liked')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        }
+
+        // Like all photos
+        likeAllBtn.addEventListener('click', () => {
+            const icon = likeAllBtn.querySelector('i');
+            const allLikeButtons = document.querySelectorAll('.like-btn');
+            
+            if (icon.classList.contains('far')) {
+                // Like all
+                allLikeButtons.forEach(button => {
+                    button.classList.add('liked');
+                    const btnIcon = button.querySelector('i');
+                    btnIcon.classList.remove('far');
+                    btnIcon.classList.add('fas');
+                });
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            } else {
+                // Unlike all
+                allLikeButtons.forEach(button => {
+                    button.classList.remove('liked');
+                    const btnIcon = button.querySelector('i');
+                    btnIcon.classList.remove('fas');
+                    btnIcon.classList.add('far');
+                });
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        });
+
+        // Add event listeners to new page photo cards
+        newPhotoCards.forEach((card, index) => {
+            card.addEventListener('click', () => {
+                openNewPagePhotoModal(index);
+            });
+            
+            const likeBtn = card.querySelector('.like-btn');
+            likeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleLike(likeBtn);
+            });
+        });
+
+        // Slideshow functionality
+        let slideshowIndex = 0;
+        let slideshowInterval;
+        let isPlaying = false;
+
+        function startSlideshow() {
+            slideshowContainer.style.display = 'flex';
+            slideshowIndex = 0;
+            updateSlideshowImage();
+            isPlaying = true;
+            slideshowInterval = setInterval(nextSlideshowImage, 3000);
+            updatePlayPauseButton();
+        }
+
+        function updateSlideshowImage() {
+            const allPhotos = [...photoCards, ...newPhotoCards];
+            if (allPhotos.length > 0) {
+                const photoSrc = allPhotos[slideshowIndex].querySelector('img').src;
+                slideshowImage.src = photoSrc;
+            }
+        }
+
+        function nextSlideshowImage() {
+            const allPhotos = [...photoCards, ...newPhotoCards];
+            slideshowIndex = (slideshowIndex + 1) % allPhotos.length;
+            updateSlideshowImage();
+        }
+
+        function prevSlideshowImage() {
+            const allPhotos = [...photoCards, ...newPhotoCards];
+            slideshowIndex = (slideshowIndex - 1 + allPhotos.length) % allPhotos.length;
+            updateSlideshowImage();
+        }
+
+        function toggleSlideshowPlayPause() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                slideshowInterval = setInterval(nextSlideshowImage, 3000);
+            } else {
+                clearInterval(slideshowInterval);
+            }
+            updatePlayPauseButton();
+        }
+
+        function updatePlayPauseButton() {
+            const icon = slideshowPlayPause.querySelector('i');
+            if (isPlaying) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            } else {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
+        }
+
+        // Slideshow event listeners
+        slideshowBtn.addEventListener('click', startSlideshow);
+        slideshowPlayPause.addEventListener('click', toggleSlideshowPlayPause);
+        slideshowNext.addEventListener('click', nextSlideshowImage);
+        slideshowPrev.addEventListener('click', prevSlideshowImage);
+        slideshowClose.addEventListener('click', () => {
+            slideshowContainer.style.display = 'none';
+            clearInterval(slideshowInterval);
+            isPlaying = false;
+        });
+
+        // Comment functionality
+        submitComment.addEventListener('click', () => {
+            const commentText = commentInput.value.trim();
+            if (commentText) {
+                addComment(commentText);
+                commentInput.value = '';
+            }
+        });
+
+        function addComment(text) {
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment');
+            
+            const authorDiv = document.createElement('div');
+            authorDiv.classList.add('comment-author');
+            authorDiv.textContent = 'Pengunjung';
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = text;
+            
+            commentDiv.appendChild(authorDiv);
+            commentDiv.appendChild(textDiv);
+            
+            commentsList.appendChild(commentDiv);
+            commentsList.scrollTop = commentsList.scrollHeight;
+        }
+
+        // Message functionality
+        messageBtn.addEventListener('click', () => {
+            const message = `Kebersamaan adalah anugerah terindah yang tak ternilai harganya. Dalam setiap momen yang kita lewati bersama, tersimpan kenangan manis yang akan selalu menghangatkan hati. Terima kasih sudah menjadi bagian dari cerita hidup kami. Semoga ikatan kita tetap erat meski waktu dan jarak memisahkan.
+
+Maaf kalo kami ada buat salah sama kakak, sehat terus di mana pun berada kak. jangan lupain kami ya.`;
+            
+            messageText.innerHTML = message.replace(/\n/g, '<br>');
+            messageModal.style.display = 'flex';
+        });
+
+        messageClose.addEventListener('click', () => {
+            messageModal.style.display = 'none';
+        });
+
+        messageOkBtn.addEventListener('click', () => {
+            messageModal.style.display = 'none';
+        });
+
+        // Event listeners for page navigation
+        specialBtn.addEventListener('click', () => {
+            newPage.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+
+        backBtn.addEventListener('click', () => {
+            newPage.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            newPage.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            createLoveParticles();
+            initializeGallery();
+        });
+
+        // Initialize gallery with default photos
+        function initializeGallery() {
+            defaultPhotos.forEach((photo, index) => {
+                addPhotoToGallery(photo.src, photo.alt);
+            });
+        }
+
+        // Add photo to gallery
+        function addPhotoToGallery(src, alt) {
+            const newCard = document.createElement('div');
+            newCard.classList.add('photo-card');
+            newCard.setAttribute('data-index', photoCards.length);
+            
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = alt;
+            img.classList.add('photo-img');
+            
+            newCard.appendChild(img);
+            gallery.appendChild(newCard);
+            
+            // Add like button
+            const likeBtn = document.createElement('button');
+            likeBtn.classList.add('like-btn');
+            likeBtn.innerHTML = '<i class="far fa-heart"></i>';
+            likeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleLike(this);
+            });
+            newCard.appendChild(likeBtn);
+            
+            // Add click event for modal
+            newCard.addEventListener('click', () => {
+                const index = Array.from(document.querySelectorAll('.photo-card')).indexOf(newCard);
+                openModal(index);
+            });
+            
+            // Update photoCards array
+            photoCards = document.querySelectorAll('.photo-card');
+        }
+
+        // Photo modal functions for main page
+        function openModal(index) {
+            currentPhotoIndex = index;
+            updateModalImage();
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateModalImage() {
+            const imgSrc = photoCards[currentPhotoIndex].querySelector('img').src;
+            modalImage.src = imgSrc;
+            modalCounter.textContent = `${currentPhotoIndex + 1} / ${photoCards.length}`;
+        }
+
+        function nextPhoto() {
+            currentPhotoIndex = (currentPhotoIndex + 1) % photoCards.length;
+            updateModalImage();
+        }
+
+        function prevPhoto() {
+            currentPhotoIndex = (currentPhotoIndex - 1 + photoCards.length) % photoCards.length;
+            updateModalImage();
+        }
+
+        // Photo modal functions for new page
+        function openNewPagePhotoModal(index) {
+            currentNewPagePhotoIndex = index;
+            updateNewPageModalImage();
+            newPageModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNewPageModal() {
+            newPageModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateNewPageModalImage() {
+            const imgSrc = newPhotoCards[currentNewPagePhotoIndex].querySelector('img').src;
+            newPageModalImage.src = imgSrc;
+            newPageModalCounter.textContent = `${currentNewPagePhotoIndex + 1} / ${newPhotoCards.length}`;
+        }
+
+        function nextNewPagePhoto() {
+            currentNewPagePhotoIndex = (currentNewPagePhotoIndex + 1) % newPhotoCards.length;
+            updateNewPageModalImage();
+        }
+
+        function prevNewPagePhoto() {
+            currentNewPagePhotoIndex = (currentNewPagePhotoIndex - 1 + newPhotoCards.length) % newPhotoCards.length;
+            updateNewPageModalImage();
+        }
+
+        // Event listeners for modals
+        modalClose.addEventListener('click', closeModal);
+        modalNext.addEventListener('click', nextPhoto);
+        modalPrev.addEventListener('click', prevPhoto);
+
+        newPageModalClose.addEventListener('click', closeNewPageModal);
+        newPageModalNext.addEventListener('click', nextNewPagePhoto);
+        newPageModalPrev.addEventListener('click', prevNewPagePhoto);
+
+        // Close modal when clicking outside the image
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        newPageModal.addEventListener('click', (e) => {
+            if (e.target === newPageModal) {
+                closeNewPageModal();
+            }
+        });
+
+        // Keyboard navigation for modals
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex') {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowRight') nextPhoto();
+                if (e.key === 'ArrowLeft') prevPhoto();
+            }
+            if (newPageModal.style.display === 'flex') {
+                if (e.key === 'Escape') closeNewPageModal();
+                if (e.key === 'ArrowRight') nextNewPagePhoto();
+                if (e.key === 'ArrowLeft') prevNewPagePhoto();
+            }
+            if (slideshowContainer.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    slideshowContainer.style.display = 'none';
+                    clearInterval(slideshowInterval);
+                    isPlaying = false;
+                }
+                if (e.key === 'ArrowRight') nextSlideshowImage();
+                if (e.key === 'ArrowLeft') prevSlideshowImage();
+                if (e.key === ' ') toggleSlideshowPlayPause();
+            }
+            if (messageModal.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    messageModal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
